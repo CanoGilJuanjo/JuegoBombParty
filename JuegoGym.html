@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,
- initial-scale=1.0">
-    <title>Juego Gym</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="shortcut icon" href="https://images.creativefabrica.com/products/previews/2024/10/16/uexPk7ixX/2nWRXwcZF9shZz049Al3np6zPSY-desktop.jpg" type="image/x-icon">
+    <title>Juego Bomba</title>
     <style>
         * {
             margin: 0;
@@ -227,16 +227,9 @@
             animation: pulse 0.5s infinite;
         }
 
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
+        .timer.paused {
+            border-style: dashed;
+            opacity: 0.7;
         }
 
         .word-section {
@@ -548,6 +541,7 @@
         let usedWords = [];
         let diccionario = new Set();
         let diccionarioCargado = false;
+        let timerPaused = false;
 
         // Diccionario básico embebido con palabras comunes en español (1500+ palabras)
         const diccionarioBasico = [
@@ -121454,6 +121448,8 @@
                 playerInput.focus();
             });
 
+        timerElement.addEventListener('click', toggleTimer);
+
         function initGame() {
             const numPlayers = parseInt(playerInput.value);
 
@@ -121610,6 +121606,7 @@
             }
 
             timeRemaining = 30;
+            timerPaused = false;
             updateTimerDisplay();
 
             timerInterval = setInterval(() => {
@@ -121625,6 +121622,27 @@
                 1000);
         }
 
+        function toggleTimer() {
+            if (timerPaused) {
+                // Resume
+                timerPaused = false;
+                timerElement.classList.remove('paused');
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    if (timeRemaining <= 0) {
+                        decreaseLives(currentPlayer);
+                        nextPlayer();
+                    }
+                }, 1000);
+            } else {
+                // Pause
+                timerPaused = true;
+                timerElement.classList.add('paused');
+                clearInterval(timerInterval);
+            }
+        }
+
         function nextPlayer() {
             currentPlayer++;
             if (currentPlayer > totalPlayers) {
@@ -121633,8 +121651,7 @@
 
             updateCurrentPlayer();
             generateNewWord();
-            timeRemaining = 30;
-            updateTimerDisplay();
+            startTimer();
         }
 
         function updateTimerDisplay() {
