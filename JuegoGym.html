@@ -121649,6 +121649,25 @@
                 currentPlayer = 1;
             }
 
+            // Buscar el siguiente jugador que tenga vidas
+            let playersChecked = 0;
+            while (playersChecked < totalPlayers) {
+                const livesElement = document.querySelector(`[data-player="${currentPlayer}"]`);
+                const lives = livesElement ? parseInt(livesElement.getAttribute('data-lives')) : 0;
+
+                if (lives > 0) {
+                    // Encontramos un jugador con vidas
+                    break;
+                }
+
+                // Este jugador no tiene vidas, pasar al siguiente
+                currentPlayer++;
+                if (currentPlayer > totalPlayers) {
+                    currentPlayer = 1;
+                }
+                playersChecked++;
+            }
+
             updateCurrentPlayer();
             generateNewWord();
             startTimer();
